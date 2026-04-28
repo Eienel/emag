@@ -3,16 +3,16 @@ pragma solidity ^0.8.28;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
-import {IERC7984} from "@iexec-nox/nox-confidential-contracts/contracts/token/IERC7984.sol";
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
+import {IERC7984} from "@iexec-nox/nox-confidential-contracts/contracts/interfaces/IERC7984.sol";
 
 /// @title ConfidentialPayrollStream
 /// @notice Period-chunked confidential payroll streams powered by ERC-7984 confidential tokens.
-/// @dev    Stream totals stay encrypted on-chain. Time math is public, so each period unlocks
-///         exactly `amountPerPeriod` (encrypted) tokens. The recipient pulls funds by claiming
-///         the next vested chunk(s); the contract calls `confidentialTransfer` on the wrapped
-///         token. Optional auditors can be granted read access to the encrypted handle so they
-///         can decrypt off-chain through the Nox gateway.
+/// @dev    Each stream stores a single encrypted `amountPerPeriod`; the public schedule is
+///         derived from `startTime`, `periodSeconds`, `totalPeriods`, `cliffPeriods`. Payouts
+///         compute `amountPerPeriod * encryptedPeriods` (FHE mul of an encrypted value by a
+///         trivially-encrypted public scalar) and call `confidentialTransfer` on the wrapped
+///         token. Auditors can be granted ACL access per stream for selective disclosure.
 contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
     /// @dev Confidential ERC-20 wrapper this contract pays out (e.g. wcUSDC).
     IERC7984 public immutable confidentialToken;
@@ -63,18 +63,18 @@ contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
     // Stream lifecycle
     // ---------------------------------------------------------------------
 
-    /// @notice Create a new payroll stream.
+    /// @notice Create a new payroll stream. Pulls `amountPerPeriod * totalPeriods` of confidential
+    ///         tokens from the caller into this contract, where they remain locked until the
+    ///         recipient claims them or the stream is cancelled.
     /// @param recipient        wallet that will pull the periodic payouts
-    /// @param encryptedAmount  encrypted per-period payout, supplied by the payer
+    /// @param encryptedAmount  encrypted per-period payout (externalEuint256 from the FHE coprocessor)
     /// @param inputProof       FHE input proof bound to the encrypted amount
     /// @param periodSeconds    length of one period (e.g. 30 days)
     /// @param totalPeriods     total number of periods in the stream
     /// @param cliffPeriods     periods to skip before the first claim is allowed
     /// @param startTime        unix timestamp the stream begins (0 = now)
-    /// @dev The payer must have already deposited `amountPerPeriod * totalPeriods`
-    ///      worth of confidential tokens into this contract, e.g. via
-    ///      `confidentialTransfer` of the wrapped token. The contract trusts the
-    ///      caller to pre-fund it; anyone who underfunds simply locks themselves out.
+    /// @dev The caller must have first called `setOperator(address(this), …)` on the
+    ///      confidential token so this contract can `confidentialTransferFrom` the locked amount.
     function createStream(
         address recipient,
         externalEuint256 encryptedAmount,
@@ -83,13 +83,22 @@ contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
         uint64 totalPeriods,
         uint64 cliffPeriods,
         uint64 startTime
-    ) external returns (uint256 streamId) {
+    ) external nonReentrant returns (uint256 streamId) {
         if (recipient == address(0) || periodSeconds == 0 || totalPeriods == 0 || cliffPeriods >= totalPeriods) {
             revert InvalidParams();
         }
 
+        // 1. Ingest encrypted per-period amount.
         euint256 amountPerPeriod = Nox.fromExternal(encryptedAmount, inputProof);
 
+        // 2. Compute total to lock (encrypted × encrypted-public-scalar).
+        euint256 totalLocked = Nox.mul(amountPerPeriod, Nox.toEuint256(uint256(totalPeriods)));
+
+        // 3. Pull funds from payer into this contract.
+        Nox.allowTransient(totalLocked, address(confidentialToken));
+        confidentialToken.confidentialTransferFrom(msg.sender, address(this), totalLocked);
+
+        // 4. Persist the stream.
         streamId = nextStreamId++;
         _streams[streamId] = Stream({
             payer: msg.sender,
@@ -103,7 +112,7 @@ contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
             amountPerPeriod: amountPerPeriod
         });
 
-        // Grant payer + recipient read access on the encrypted per-period handle.
+        // 5. ACL: payer, recipient, and this contract can decrypt the per-period handle.
         Nox.allow(amountPerPeriod, msg.sender);
         Nox.allow(amountPerPeriod, recipient);
         Nox.allowThis(amountPerPeriod);
@@ -132,17 +141,15 @@ contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
         periodsPaid = vested - s.claimedPeriods;
         s.claimedPeriods = vested;
 
-        // payout = amountPerPeriod * periodsPaid (mul-by-public-scalar is FHE safe).
-        euint256 payout = Nox.mul(s.amountPerPeriod, uint256(periodsPaid));
+        euint256 payout = Nox.mul(s.amountPerPeriod, Nox.toEuint256(uint256(periodsPaid)));
         Nox.allowTransient(payout, address(confidentialToken));
-
         confidentialToken.confidentialTransfer(s.recipient, payout);
 
         emit StreamClaimed(streamId, s.recipient, periodsPaid);
     }
 
-    /// @notice Cancel a stream. Already-vested-but-unclaimed periods stay claimable;
-    ///         remaining periods are forfeited and can be swept back by the payer.
+    /// @notice Cancel a stream. Already-vested periods stay claimable by the recipient;
+    ///         remaining (un-vested) periods are returned to the payer immediately.
     function cancel(uint256 streamId) external nonReentrant {
         Stream storage s = _streams[streamId];
         if (s.payer != msg.sender) revert NotPayer();
@@ -154,7 +161,7 @@ contract ConfidentialPayrollStream is Ownable, ReentrancyGuard {
         s.totalPeriods = vested; // freeze the schedule at the current vested point
 
         if (forfeited > 0) {
-            euint256 refund = Nox.mul(s.amountPerPeriod, uint256(forfeited));
+            euint256 refund = Nox.mul(s.amountPerPeriod, Nox.toEuint256(uint256(forfeited)));
             Nox.allowTransient(refund, address(confidentialToken));
             confidentialToken.confidentialTransfer(s.payer, refund);
         }

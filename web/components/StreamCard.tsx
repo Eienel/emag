@@ -58,8 +58,8 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
   async function decrypt() {
     setDecryptErr(null);
     try {
-      const nox = await getNoxClient();
-      const v = await nox.decryptUint256(stream.amountHandle, payroll);
+      const nox = await getNoxClient(walletClient);
+      const v = await nox.decryptUint256(stream.amountHandle);
       setDecrypted(v);
     } catch (e: any) {
       setDecryptErr(e?.message ?? String(e));

@@ -16,6 +16,8 @@ web/.next/
 web/out/
 web/build/
 web/next-env.d.ts
+web/tsconfig.tsbuildinfo
+contracts/tsconfig.tsbuildinfo
 
 # misc
 *.log

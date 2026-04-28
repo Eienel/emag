@@ -113,7 +113,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
 
       // 3. authorise the payroll contract as an operator on wcUSDC for ~1 year
       setStep("Authorising the payroll contract as a confidential operator…");
-      const oneYearFromNow = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365);
+      const oneYearFromNow = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365;
       await walletClient.writeContract({
         address: wrapper,
         abi: wrapperAbi,
@@ -121,11 +121,11 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
         args: [payroll, oneYearFromNow],
       });
 
-      // 4. send the per-period amount confidentially into the payroll contract.
-      //    The contract will release it again as recipients claim.
+      // 4. encrypt the per-period amount (the contract will multiply by totalPeriods
+      //    and pull the lump sum via confidentialTransferFrom inside createStream).
       setStep("Sealing per-period amount with FHE…");
-      const nox = await getNoxClient();
-      const enc = await nox.encryptUint256(amount, payroll, address);
+      const nox = await getNoxClient(walletClient);
+      const enc = await nox.encryptUint256(amount, payroll);
 
       setStep("Submitting createStream transaction…");
       const tx = await walletClient.writeContract({
