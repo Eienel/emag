@@ -68,7 +68,16 @@ async function main() {
   fs.writeFileSync(webOutPath, JSON.stringify(out, null, 2));
   console.log(`✓ mirrored to ${webOutPath}`);
 
-  // 5. Verify on Arbiscan when an API key is set
+  // 5. Optionally hand ownership of the payroll contract over to a final owner
+  //    (recommended when the deployer is a disposable hot wallet).
+  const finalOwner = process.env.FINAL_OWNER;
+  if (finalOwner && finalOwner.toLowerCase() !== deployer.address.toLowerCase()) {
+    console.log(`\n→ transferring payroll ownership to ${finalOwner}…`);
+    await (await payroll.transferOwnership(finalOwner)).wait();
+    console.log(`  ✓ owner now ${finalOwner}`);
+  }
+
+  // 6. Verify on Arbiscan when an API key is set
   if (process.env.ARBISCAN_API_KEY && chainId === 421614) {
     console.log("\n→ verifying contracts on Arbiscan…");
     try {

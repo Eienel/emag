@@ -1,8 +1,12 @@
 /* eslint-disable no-console */
 /**
- * Seed an end-to-end demo: mint mUSDC to two test accounts, wrap into wcUSDC,
- * and create a couple of streams so a fresh deployment has something to look
- * at in the UI.
+ * Seed an end-to-end demo:
+ *   1. mint mUSDC to the deployer (if missing)
+ *   2. wrap into wcUSDC (so the employer holds confidential balance)
+ *   3. authorise the payroll contract as a confidential operator
+ *
+ * NOTE: actually creating a stream requires off-chain FHE encryption via the
+ * Nox handle SDK; that's done from the frontend at demo time, not here.
  *
  * Usage:
  *   DEMO_RECIPIENT=0xRECIPIENT npm --prefix contracts run seed
@@ -19,24 +23,47 @@ async function main() {
   const deployments = JSON.parse(fs.readFileSync(deploymentsPath, "utf8"));
   const [employer] = await ethers.getSigners();
   const recipient = process.env.DEMO_RECIPIENT;
-  if (!recipient) throw new Error("set DEMO_RECIPIENT=0x… (a second wallet you control)");
+  if (!recipient) {
+    console.warn("DEMO_RECIPIENT not set — wrapping for the employer only.");
+  } else {
+    console.log(`recipient: ${recipient}`);
+  }
 
   console.log(`employer:  ${employer.address}`);
-  console.log(`recipient: ${recipient}`);
+  console.log(`network:   ${network.name}\n`);
 
   const usdc = await ethers.getContractAt("MockERC20", deployments.contracts.underlying);
   const wrapper = await ethers.getContractAt("WrappedConfidentialUSDC", deployments.contracts.wrappedConfidentialUSDC);
+  const payroll = deployments.contracts.confidentialPayrollStream as `0x${string}`;
 
-  // Mint 60k mUSDC, approve wrapper, and wrap.
-  const amount = 60_000n * 10n ** 6n;
-  console.log("→ minting mUSDC to employer…");
-  await (await usdc.mint(employer.address, amount)).wait();
-  console.log("→ approving wrapper…");
-  await (await usdc.approve(deployments.contracts.wrappedConfidentialUSDC, amount)).wait();
-  console.log("→ wrapping mUSDC → wcUSDC…");
-  await (await wrapper.wrap(employer.address, amount)).wait();
+  // Make sure the employer has plenty of mUSDC (mint is open on the mock).
+  const targetBalance = 200_000n * 10n ** 6n;
+  const current = (await usdc.balanceOf(employer.address)) as bigint;
+  if (current < targetBalance) {
+    const need = targetBalance - current;
+    console.log(`→ minting ${need} mUSDC to employer (current ${current})…`);
+    await (await usdc.mint(employer.address, need)).wait();
+  } else {
+    console.log(`✓ employer mUSDC balance already ≥ target (${current})`);
+  }
 
-  console.log("\n✓ seed complete. Open the employer page in the UI to create the demo streams.");
+  // Approve & wrap into wcUSDC so the employer can pay confidentially.
+  const wrapAmount = 100_000n * 10n ** 6n;
+  console.log(`→ approving ${wrapAmount} mUSDC for the wrapper…`);
+  await (await usdc.approve(deployments.contracts.wrappedConfidentialUSDC, wrapAmount)).wait();
+  console.log(`→ wrapping ${wrapAmount} mUSDC → wcUSDC…`);
+  await (await wrapper.wrap(employer.address, wrapAmount)).wait();
+
+  // Pre-authorise the payroll contract as a confidential operator for ~1 year.
+  // This means the employer doesn't have to do it from the UI before each
+  // stream creation — the demo flow is one click.
+  const oneYear = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365;
+  console.log(`→ setOperator(payroll, ${oneYear}) on wcUSDC…`);
+  await (await wrapper.setOperator(payroll, oneYear)).wait();
+
+  console.log("\n✓ seed complete.");
+  console.log("Next: open the employer page in the UI to create the demo stream(s).");
+  console.log(`Tip: set 'Period' to 'Hourly (demo)' in the form so 'Claim' is testable on video.`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

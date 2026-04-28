@@ -197,13 +197,32 @@ Open <http://localhost:3000>, switch your wallet to Arbitrum Sepolia, and:
 | Item                            | Value                       |
 |---------------------------------|-----------------------------|
 | Network                         | Arbitrum Sepolia (421614)   |
-| `MockERC20` (mUSDC)             | *deployed by `deploy.ts`* |
-| `WrappedConfidentialUSDC`       | *deployed by `deploy.ts`* |
-| `ConfidentialPayrollStream`     | *deployed by `deploy.ts`* |
+| `MockERC20` (mUSDC)             | *populated post-deploy in `contracts/deployments.arbitrumSepolia.json`* |
+| `WrappedConfidentialUSDC`       | *populated post-deploy*     |
+| `ConfidentialPayrollStream`     | *populated post-deploy*     |
 | Frontend                        | Vercel — link in the X post |
 | GitHub                          | this repo                   |
 
-`contracts/deployments.arbitrumSepolia.json` is the source of truth post-deploy.
+`contracts/deployments.arbitrumSepolia.json` is the source of truth
+post-deploy and is mirrored to `web/lib/deployments.json` so the frontend
+picks new addresses up automatically.
+
+### Disposable deployer pattern
+
+For the hackathon we generate a **fresh, disposable hot wallet** for the
+deployer and (recommended) `transferOwnership` of the payroll contract to
+the team's actual wallet at deploy time:
+
+```bash
+# in contracts/.env
+DEPLOYER_PRIVATE_KEY=0x...      # disposable, generated fresh
+FINAL_OWNER=0xYourRealWallet    # contract owner after deploy
+
+npm --prefix contracts run deploy
+```
+
+The deployer wallet then never needs to touch real funds again — burn
+or forget.
 
 ---
 
