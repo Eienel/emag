@@ -3,6 +3,7 @@
 import { useAccount } from "wagmi";
 import { CreateStreamForm } from "@/components/CreateStreamForm";
 import { StreamCard } from "@/components/StreamCard";
+import { MintFaucet } from "@/components/MintFaucet";
 import { useStreams } from "@/lib/streams";
 
 export default function EmployerPage() {
@@ -21,6 +22,8 @@ export default function EmployerPage() {
           auditor you grant can ever decrypt it.
         </p>
       </section>
+
+      <MintFaucet />
 
       <section className="rounded-3xl border border-edge bg-smoke/40 p-6">
         <CreateStreamForm onCreated={refresh} />
