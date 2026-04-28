@@ -1,0 +1,10 @@
+{
+  "chainId": 421614,
+  "deployedAt": null,
+  "deployer": null,
+  "contracts": {
+    "underlying": "0x0000000000000000000000000000000000000000",
+    "wrappedConfidentialUSDC": "0x0000000000000000000000000000000000000000",
+    "confidentialPayrollStream": "0x0000000000000000000000000000000000000000"
+  }
+}

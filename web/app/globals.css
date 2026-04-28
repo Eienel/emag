@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  background: #0a0a0c;
+  color: #f1f1f3;
+}
+
+.cipher {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #1a1a20 0%, #26262d 100%);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #26262d;
+  color: #ff7a45;
+  word-break: break-all;
+}

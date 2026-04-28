@@ -1,0 +1,18 @@
+{
+  "name": "shadowpay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ShadowPay — confidential payroll & vesting streams on iExec Nox",
+  "workspaces": [
+    "contracts",
+    "web"
+  ],
+  "scripts": {
+    "contracts:compile": "npm --prefix contracts run compile",
+    "contracts:deploy": "npm --prefix contracts run deploy",
+    "contracts:test": "npm --prefix contracts run test",
+    "web:dev": "npm --prefix web run dev",
+    "web:build": "npm --prefix web run build",
+    "web:start": "npm --prefix web run start"
+  }
+}
