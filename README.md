@@ -78,7 +78,7 @@ accountants can be granted **selective disclosure** per stream when needed.
   auditor, accountant, regulator) read-access to a specific stream's encrypted
   handle. Granted auditors can decrypt the per-period amount through the Nox
   gateway.
-- **Vibe-coded with ChainGPT**: paste a sentence like
+- **Vibe Send with ChainGPT**: paste a sentence like
   *"Pay 0xAlice 5,000 USDC monthly for 12 months with a 3-month cliff"*
   and the form pre-fills via the ChainGPT API (or a deterministic local parser
   fallback).

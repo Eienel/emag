@@ -156,7 +156,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
   return (
     <form onSubmit={submit} className="space-y-5">
       <div className="rounded-2xl border border-edge bg-smoke p-5">
-        <p className="mb-2 text-xs uppercase tracking-widest text-muted">Vibe-code with ChainGPT</p>
+        <p className="mb-2 text-xs uppercase tracking-widest text-muted">Vibe Send with ChainGPT</p>
         <div className="flex gap-2">
           <input
             value={aiPrompt}

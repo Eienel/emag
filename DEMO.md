@@ -84,7 +84,7 @@ Tap *Decrypt* on the stream card. Number appears.
 **End frame:** the homepage hero.
 
 > "Crypto solved payments. ShadowPay solves payroll.
-> Built on iExec Nox. Vibe-coded with ChainGPT."
+> Built on iExec Nox. Vibe Send with ChainGPT."
 
 ---
 

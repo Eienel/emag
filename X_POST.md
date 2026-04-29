@@ -27,7 +27,7 @@ Live: https://shadowpay-eight.vercel.app
 Code: <repo-link>
 Demo: <demo-link>
 
-Vibe-coded with @Chain_GPT. Built on @arbitrum.
+Vibe Send with @Chain_GPT. Built on @arbitrum.
 ```
 
 ## Option B — thread (4 tweets)
@@ -75,7 +75,7 @@ Code (MIT): <repo-link>
 Built for crypto-native startups, DAOs, tokenized companies, and global
 contractors paying remote teams.
 
-Vibe-coded with @Chain_GPT.
+Vibe Send with @Chain_GPT.
 ```
 
 ---
