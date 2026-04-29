@@ -1,117 +1,112 @@
-# ShadowPay — 4-minute demo script
+# ShadowPay — 2-minute demo script
 
-The hackathon caps the demo at 4 minutes. Here's a tight, scannable script —
-roughly 60 seconds × four beats. Read it aloud while recording your screen
-(or your phone screen mirrored into a desktop, if you don't have a PC).
+The hackathon caps demos at 4 minutes; **2 minutes is better**. Tighter,
+more re-watchable, lands harder. Here's a beat-by-beat with timing.
 
-> Tip: practise once, then record. Anything past 4:00 disqualifies the
+> Practise once, then record. Anything past 4:00 disqualifies the
 > submission per the brief.
 
 ---
 
-## Beat 1 — the problem (0:00 – 0:45)
+## Setup (do this once before recording)
 
-**On screen:** open Etherscan, scroll any payroll-style address.
+- **3 wallets** in your phone's wallet app (MetaMask Mobile / Rainbow):
+  - "Founder" → has Arbitrum Sepolia ETH (the deployer wallet, or any wallet you funded)
+  - "Alice" (employee) → tiny bit of Sepolia ETH for gas
+  - "Auditor" → tiny bit of Sepolia ETH for gas
+- **Three browser tabs** open at <https://shadowpay-eight.vercel.app>, each connected to a different wallet.
+- **Pre-mint mUSDC for the founder wallet** — open `/employer`, tap *Mint mUSDC*. Don't record this.
+- **Pre-create a stream with a 1-hour period** so vesting actually progresses during the demo. (Optional but recommended; lets you show *Claim* without waiting.)
 
-> "If your company pays salaries on Ethereum, every employee can read every
-> other employee's salary on Etherscan. That's why nobody actually does
-> Web3-native payroll — they all use Coinbase or Deel as a custodial
-> middleman, which defeats the entire point.
+---
+
+## Beat 1 — the problem (0:00 – 0:20)
+
+**On screen:** Etherscan tab open on any payroll-style address (or the
+hero of shadowpay-eight.vercel.app).
+
+> "Crypto solved payments. It hasn't solved payroll.
 >
-> ShadowPay fixes this. Salaries on-chain. Numbers off it."
+> Pay on Ethereum: every salary is public on Etherscan. Use Coinbase or
+> Deel: you've defeated the point of crypto. Until now."
 
-## Beat 2 — vibe-coded stream creation (0:45 – 1:45)
+## Beat 2 — vibe-coded stream creation (0:20 – 1:00)
 
-**On screen:** ShadowPay → Employer page, wallet connected as the founder.
+**On screen:** ShadowPay → Employer page, founder wallet connected.
 
-> "I'm the founder. I want to pay Alice 5,000 USDC a month for a year, with
-> a 3-month cliff."
+> "I'm a founder. I want to pay Alice $5,000 a month for a year, with a
+> 3-month cliff."
 
 Type into the ChainGPT prompt:
 
 ```
-Pay 0xAlice... 5,000 USDC monthly for 12 months with a 3-month cliff
+Pay 0xAlice... 5000 USDC monthly for 12 months with a 3-month cliff
 ```
 
-Hit *Parse*. Watch the form fill in.
+Tap *Parse*. Watch the form fill. Tap *Create stream*.
 
-> "ChainGPT parsed that into a structured payroll spec. Now I just hit
-> Create. Behind the scenes:
->   1. it approves USDC,
->   2. wraps it into confidential wcUSDC using iExec's official ERC-7984
->      wrapper,
->   3. authorises the payroll contract as a confidential operator,
->   4. encrypts the per-period amount with FHE through the Nox SDK,
->   5. and calls createStream on Arbitrum Sepolia."
+> "ChainGPT parsed that. The contract approves USDC, wraps it into a
+> confidential ERC-7984 token, encrypts the per-period amount with FHE,
+> and creates the stream — one click, one transaction.
+>
+> The stream is live. The amount on-chain is just ciphertext."
 
-When the tx confirms, point at the new card.
+Point at the new card showing the ciphertext handle.
 
-> "There's the stream. Notice — the amount is just a ciphertext handle.
-> That's all that's on chain."
+## Beat 3 — privacy in action (1:00 – 1:30)
 
-## Beat 3 — privacy in action (1:45 – 3:00)
+Switch to **Alice's wallet** tab → Employee page.
 
-Switch to a second browser/wallet that's the **employee** (Alice).
+> "Alice. Same app, different wallet. She sees her stream — but as a
+> ciphertext. She taps *Decrypt*…"
 
-**On screen:** Employee page.
+Tap *Decrypt*. Orange number appears.
 
-> "Now I'm Alice. I see the stream pointed at me — but as a ciphertext.
-> When I click *Decrypt*, the Nox gateway checks I have ACL access to this
-> handle…"
+> "…and sees her own number. 5,000."
 
-Click decrypt, the orange number appears.
+Switch quickly to a **third tab** with no wallet permissions.
 
-> "…and I see my own number: 5,000. But only mine."
+> "Anyone else? The stream is on-chain, but the amount stays
+> ciphertext. They can see *that* a stream exists, not what's in it."
 
-Now switch to a **third wallet** (a curious coworker, "Bob").
+## Beat 4 — selective disclosure & close (1:30 – 2:00)
 
-> "If I'm Bob, a coworker — same page, different wallet — I can see the
-> stream exists, but the decrypt fails. The number stays a ciphertext."
+Back to **founder wallet** → tap *Grant auditor* on the stream card →
+paste the auditor address. Switch to the **auditor wallet** tab →
+Auditor page.
 
-(Show the failed decrypt or the stream not appearing in Bob's list.)
+> "Now an external auditor. The founder just granted them access to
+> *this stream only*. They decrypt — and see the number. Every other
+> stream on the system stays sealed."
 
-## Beat 4 — selective disclosure & claim (3:00 – 4:00)
+Tap *Decrypt* on the stream card. Number appears.
 
-Back to the **employer** wallet → click *Grant auditor* on the stream, paste
-the auditor's address. Switch to the **auditor** wallet → Auditor page.
+**End frame:** the homepage hero.
 
-> "The employer just granted an external auditor access to this specific
-> stream. The auditor can decrypt it — and only this one. Every other stream
-> on the system stays sealed."
-
-Show the decrypt working in the auditor view.
-
-Switch back to the **employee** wallet, advance time (or just show on a
-shorter-period stream you set up beforehand for the demo).
-
-> "Meanwhile, every period vests automatically. Alice clicks *Claim*, and
-> the contract releases this period's pay confidentially — encrypted balance
-> moves into her wallet, no plaintext anywhere on chain."
-
-**End frame:** the homepage tagline.
-
-> "Salaries on-chain. Numbers off it. ShadowPay, built on iExec Nox."
+> "Crypto solved payments. ShadowPay solves payroll.
+> Built on iExec Nox. Vibe-coded with ChainGPT."
 
 ---
 
-## Recording on mobile (since you don't have a PC)
+## Recording on iPhone
 
-- iOS: Settings → Control Center → add **Screen Recording**. Record from the
-  pulldown.
-- Have **three browser tabs** open in advance, each with a different wallet
-  signed in (use Rainbow, MetaMask Mobile, and Trust). Switch between tabs
-  for the role transitions.
-- Use a stream with a **shorter period (1 hour or even 1 minute)** seeded
-  before the demo so you can show the *Claim* step without waiting a month.
-  `seed-demo.ts` is wired for this — set `DEMO_PERIOD_SECONDS` to override.
-- Record once, watch it back, re-record. The 4-minute cap is strict.
+- Settings → Control Center → add **Screen Recording**. Pull down → tap
+  the record button. 3-second countdown starts.
+- Speak into the phone's mic while recording — captures voiceover live.
+- Edit in the Photos app: tap *Edit* → trim handles → *Done*. Use
+  fade-in if the cut is abrupt.
+- Export as 1080p. Upload to YouTube unlisted, or attach directly to
+  the X post if it's under the 2:20 native limit.
 
 ## What to upload alongside the video
 
-The X (Twitter) post must include:
+The X post must include (per the brief):
 
-1. A short description of the project (use the homepage tagline + one
-   sentence on confidentiality).
-2. The demo video (≤ 4 min).
+1. Short project description (use the homepage tagline + one line on
+   confidentiality).
+2. The demo video (≤ 2 min recommended, ≤ 4 min hard cap).
 3. A link to this repo.
-4. Tag `@iEx_ec` and `@Chain_GPT`.
+4. Live link: <https://shadowpay-eight.vercel.app>
+5. Tags: `@iEx_ec` and `@Chain_GPT`.
+
+Pre-written variants are in `X_POST.md`.
