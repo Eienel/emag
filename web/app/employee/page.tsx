@@ -22,14 +22,14 @@ export default function EmployeePage() {
 
       <section className="space-y-3">
         {!address && (
-          <div className="rounded-2xl border border-dashed border-edge p-8 text-center text-sm text-muted">
+          <div className="rounded-2xl glass border-dashed p-8 text-center text-sm text-muted">
             Connect your wallet to see your streams.
           </div>
         )}
         {loading && <p className="text-sm text-muted">Loading…</p>}
         {error && <p className="text-sm text-red-400">{error}</p>}
         {address && !loading && mine.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-edge p-8 text-center text-sm text-muted">
+          <div className="rounded-2xl glass border-dashed p-8 text-center text-sm text-muted">
             No streams pointed at your address yet.
           </div>
         )}

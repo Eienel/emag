@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <div className="pt-12">
       <section className="max-w-3xl">
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-edge bg-smoke px-3 py-1 text-xs uppercase tracking-widest text-muted">
+        <p className="mb-4 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs uppercase tracking-widest text-muted">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" /> iExec Nox · ERC-7984 · Arbitrum
         </p>
         <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight">
@@ -16,8 +16,7 @@ export default function HomePage() {
           Until now, paying salaries on-chain meant choosing between
           <span className="text-white"> transparency</span> (every salary public on Etherscan) and
           <span className="text-white"> usability</span> (custodial off-ramps that defeat the point).
-          ShadowPay is the first protocol that delivers both — confidential ERC-7984 streams with
-          selective disclosure for auditors.
+          ShadowPay does both — confidential ERC-7984 streams with selective disclosure for auditors.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">
@@ -29,13 +28,13 @@ export default function HomePage() {
           </Link>
           <Link
             href="/employee"
-            className="rounded-md border border-edge px-5 py-2.5 text-sm font-medium hover:border-accent"
+            className="rounded-md glass glass-hover px-5 py-2.5 text-sm font-medium"
           >
             Claim your pay
           </Link>
           <Link
             href="/auditor"
-            className="rounded-md border border-edge px-5 py-2.5 text-sm font-medium hover:border-accent"
+            className="rounded-md glass glass-hover px-5 py-2.5 text-sm font-medium"
           >
             Audit a stream
           </Link>
@@ -78,7 +77,7 @@ export default function HomePage() {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-edge bg-smoke p-5">
+    <div className="glass glass-hover rounded-2xl p-5">
       <p className="text-sm font-semibold text-white">{title}</p>
       <p className="mt-2 text-sm text-muted">{children}</p>
     </div>

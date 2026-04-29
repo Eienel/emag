@@ -43,7 +43,7 @@ export function MintFaucet() {
   const bal = (balance as bigint | undefined) ?? 0n;
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-edge bg-smoke px-5 py-4">
+    <div className="flex items-center justify-between rounded-2xl glass glass-hover px-5 py-4">
       <div>
         <p className="text-xs uppercase tracking-widest text-muted">Demo balance</p>
         <p className="mt-1 text-lg font-semibold">
@@ -54,7 +54,7 @@ export function MintFaucet() {
         type="button"
         onClick={mint}
         disabled={busy}
-        className="rounded-md border border-edge px-3 py-1.5 text-sm hover:border-accent disabled:opacity-50"
+        className="rounded-md glass glass-hover px-3 py-1.5 text-sm disabled:opacity-50"
       >
         {busy ? "Minting…" : `+ Mint ${formatUSDC(MINT_AMOUNT)} mUSDC`}
       </button>

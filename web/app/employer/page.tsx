@@ -25,7 +25,7 @@ export default function EmployerPage() {
 
       <MintFaucet />
 
-      <section className="rounded-3xl border border-edge bg-smoke/40 p-6">
+      <section className="rounded-3xl glass-strong p-6">
         <CreateStreamForm onCreated={refresh} />
       </section>
 
@@ -38,7 +38,7 @@ export default function EmployerPage() {
         {loading && <p className="text-sm text-muted">Loading…</p>}
         {error && <p className="text-sm text-red-400">{error}</p>}
         {!loading && !error && mine.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-edge p-8 text-center text-sm text-muted">
+          <div className="rounded-2xl glass border-dashed p-8 text-center text-sm text-muted">
             No streams yet. Create one above to get going.
           </div>
         )}

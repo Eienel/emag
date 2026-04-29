@@ -124,7 +124,7 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
   const progress = Math.min(100, Math.round((vestedN / totalPeriods) * 100));
 
   return (
-    <div className="rounded-2xl border border-edge bg-smoke p-5">
+    <div className="rounded-2xl glass glass-hover p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-widest text-muted">Stream #{stream.id.toString()}</p>
@@ -156,8 +156,8 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
       </div>
 
       <div className="mt-4">
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-edge">
-          <div className="h-full bg-accent" style={{ width: `${progress}%` }} />
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5 backdrop-blur">
+          <div className="h-full bg-accent transition-[width] duration-500" style={{ width: `${progress}%` }} />
         </div>
         <p className="mt-2 text-xs text-muted">
           {vestedN} / {totalPeriods} periods vested · {claimedN} claimed · {claimablePeriodsN} claimable
@@ -179,14 +179,14 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
             <button
               onClick={cancel}
               disabled={busy}
-              className="rounded-md border border-edge px-3 py-1.5 text-sm hover:border-red-700 hover:text-red-300 disabled:opacity-50"
+              className="rounded-md glass glass-hover px-3 py-1.5 text-sm hover:!border-red-700/60 hover:text-red-300 disabled:opacity-50"
             >
               Cancel stream
             </button>
             <button
               onClick={grantAuditor}
               disabled={busy}
-              className="rounded-md border border-edge px-3 py-1.5 text-sm hover:border-accent disabled:opacity-50"
+              className="rounded-md glass glass-hover px-3 py-1.5 text-sm disabled:opacity-50"
             >
               Grant auditor
             </button>

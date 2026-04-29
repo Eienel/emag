@@ -83,6 +83,7 @@ function extractJson(s: string): Record<string, unknown> | null {
 }
 
 const PERIODS: { re: RegExp; seconds: number }[] = [
+  { re: /\bminutely\b|per minute|every minute|each minute/i, seconds: 60 },
   { re: /\bhourly\b|per hour|every hour/i, seconds: 3600 },
   { re: /\bdaily\b|per day|every day/i, seconds: 86400 },
   { re: /\bweekly\b|per week|every week/i, seconds: 604800 },

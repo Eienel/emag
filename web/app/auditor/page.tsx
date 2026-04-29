@@ -28,7 +28,7 @@ export default function AuditorPage() {
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
         placeholder="filter by address (0x…)"
-        className="w-full rounded-md border border-edge bg-smoke px-3 py-2 text-sm focus:border-accent focus:outline-none"
+        className="w-full rounded-md glass glass-hover px-3 py-2 text-sm focus:!border-accent focus:outline-none"
       />
 
       {loading && <p className="text-sm text-muted">Loading…</p>}

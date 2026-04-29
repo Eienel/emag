@@ -24,27 +24,29 @@ export interface NoxClient {
 
 let _cached: NoxClient | null = null;
 let _cachedKey: string | null = null;
+let _lastError: string | null = null;
 
 /**
  * Lazily load the Nox SDK and instantiate a client. We tolerate the SDK being
  * unavailable (e.g. SSR, or before the wallet is connected) by returning a
- * stub that surfaces a clear hint at call-time.
+ * stub that surfaces a clear hint at call-time. The SDK auto-resolves the
+ * gateway / subgraph / FHE coprocessor address from the wallet's chainId,
+ * so we deliberately do NOT override `gatewayUrl` here — overriding with a
+ * guess broke initialisation in the first deploy.
  */
 export async function getNoxClient(walletClient?: WalletClient): Promise<NoxClient> {
   const key = walletClient?.account?.address ?? "anon";
   if (_cached && _cachedKey === key) return _cached;
 
   if (typeof window === "undefined" || !walletClient) {
-    _cached = stubClient();
-    _cachedKey = key;
-    return _cached;
+    return uninitialisedStub("connect a wallet on Arbitrum Sepolia first");
   }
 
   try {
     const { createViemHandleClient } = await import("@iexec-nox/handle");
-    const handleClient = await createViemHandleClient(walletClient, {
-      gatewayUrl: (process.env.NEXT_PUBLIC_NOX_GATEWAY ?? "https://gateway.iex.ec/nox") as `https://${string}`,
-    });
+    // No config override — let the SDK pick up the canonical Arbitrum Sepolia
+    // gateway URL, subgraph URL and FHE coprocessor address from chainId 421614.
+    const handleClient = await createViemHandleClient(walletClient);
 
     _cached = {
       async encryptUint256(plaintext, contractAddress) {
@@ -60,25 +62,26 @@ export async function getNoxClient(walletClient?: WalletClient): Promise<NoxClie
       },
     };
     _cachedKey = key;
+    _lastError = null;
     return _cached;
   } catch (err) {
-    console.warn("[nox] SDK unavailable — falling back to local stub", err);
-    _cached = stubClient();
-    _cachedKey = key;
-    return _cached;
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn("[nox] SDK init failed — falling back to stub", err);
+    _lastError = msg;
+    return uninitialisedStub(`Nox SDK init failed: ${msg}`);
   }
 }
 
-/** Demo stub used when the Nox SDK can't initialise. Surfaces a clear error. */
-function stubClient(): NoxClient {
+/** Stub that surfaces the actual error reason instead of a generic hint. */
+function uninitialisedStub(reason: string): NoxClient {
   return {
-    async encryptUint256() {
-      throw new Error("Nox SDK not initialised — connect a wallet on Arbitrum Sepolia first.");
-    },
-    async decryptUint256() {
-      throw new Error("Nox SDK not initialised — connect a wallet on Arbitrum Sepolia first.");
-    },
+    async encryptUint256() { throw new Error(reason); },
+    async decryptUint256() { throw new Error(reason); },
   };
+}
+
+export function lastNoxError(): string | null {
+  return _lastError;
 }
 
 export function shortHandle(handle: string, take = 6): string {

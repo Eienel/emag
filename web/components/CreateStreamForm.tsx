@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useChainId, useWalletClient } from "wagmi";
-import { parseAbi, type Address } from "viem";
+import { useAccount, useChainId, usePublicClient, useWalletClient } from "wagmi";
+import type { Address, PublicClient } from "viem";
 import { payrollAbi, wrapperAbi, erc20Abi } from "@/lib/abis";
 import { getNoxClient } from "@/lib/nox";
 import { parseUSDC } from "@/lib/format";
 import deployments from "@/lib/deployments.json";
 
 const PERIOD_OPTIONS: { label: string; seconds: number }[] = [
-  { label: "Monthly (30d)", seconds: 30 * 24 * 60 * 60 },
-  { label: "Bi-weekly (14d)", seconds: 14 * 24 * 60 * 60 },
-  { label: "Weekly (7d)", seconds: 7 * 24 * 60 * 60 },
-  { label: "Daily (24h)", seconds: 24 * 60 * 60 },
+  { label: "Live demo (60s)", seconds: 60 },
   { label: "Hourly (demo)", seconds: 60 * 60 },
+  { label: "Daily (24h)", seconds: 24 * 60 * 60 },
+  { label: "Weekly (7d)", seconds: 7 * 24 * 60 * 60 },
+  { label: "Bi-weekly (14d)", seconds: 14 * 24 * 60 * 60 },
+  { label: "Monthly (30d)", seconds: 30 * 24 * 60 * 60 },
 ];
 
 type FormState = {
@@ -32,10 +33,30 @@ const initial: FormState = {
   cliffPeriods: "0",
 };
 
+/**
+ * Pull current network fees from the public client and bump them so a stale
+ * mobile-wallet estimate doesn't reject the tx with "max fee per gas less
+ * than block base fee". Arbitrum Sepolia's base fee can wiggle between
+ * estimation and inclusion; 2× headroom is plenty and gas is cheap.
+ */
+async function bumpedFees(publicClient: PublicClient | undefined) {
+  if (!publicClient) return undefined;
+  try {
+    const fees = await publicClient.estimateFeesPerGas();
+    return {
+      maxFeePerGas: fees.maxFeePerGas ? fees.maxFeePerGas * 2n : undefined,
+      maxPriorityFeePerGas: fees.maxPriorityFeePerGas ?? undefined,
+    } as const;
+  } catch {
+    return undefined;
+  }
+}
+
 export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
   const { address } = useAccount();
   const chainId = useChainId();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const [form, setForm] = useState<FormState>(initial);
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState<string | null>(null);
@@ -93,6 +114,8 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
 
     setBusy(true);
     try {
+      const fees = await bumpedFees(publicClient);
+
       // 1. approve underlying USDC for the wrapper
       setStep("Approving USDC for wrapping…");
       await walletClient.writeContract({
@@ -100,6 +123,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
         abi: erc20Abi,
         functionName: "approve",
         args: [wrapper, totalDeposit],
+        ...fees,
       });
 
       // 2. wrap USDC → wcUSDC
@@ -109,6 +133,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
         abi: wrapperAbi,
         functionName: "wrap",
         args: [address, totalDeposit],
+        ...fees,
       });
 
       // 3. authorise the payroll contract as an operator on wcUSDC for ~1 year
@@ -119,6 +144,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
         abi: wrapperAbi,
         functionName: "setOperator",
         args: [payroll, oneYearFromNow],
+        ...fees,
       });
 
       // 4. encrypt the per-period amount (the contract will multiply by totalPeriods
@@ -141,6 +167,7 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
           cliffPeriods,
           0n,
         ],
+        ...fees,
       });
       setSuccess(`Stream created. tx: ${tx}`);
       setForm(initial);
@@ -155,14 +182,14 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
 
   return (
     <form onSubmit={submit} className="space-y-5">
-      <div className="rounded-2xl border border-edge bg-smoke p-5">
+      <div className="glass glass-hover rounded-2xl p-5">
         <p className="mb-2 text-xs uppercase tracking-widest text-muted">Vibe Send with ChainGPT</p>
         <div className="flex gap-2">
           <input
             value={aiPrompt}
             onChange={(e) => setAiPrompt(e.target.value)}
             placeholder='e.g. "Pay 0xAlice 5,000 USDC monthly for 12 months with a 3-month cliff"'
-            className="flex-1 rounded-md border border-edge bg-ink px-3 py-2 text-sm outline-none focus:border-accent"
+            className="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm outline-none focus:border-accent"
           />
           <button
             type="button"
@@ -225,8 +252,8 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
       </div>
 
       {step && <p className="text-xs text-muted">→ {step}</p>}
-      {error && <p className="rounded-md border border-red-700 bg-red-950 px-3 py-2 text-xs text-red-300">{error}</p>}
-      {success && <p className="rounded-md border border-green-800 bg-green-950 px-3 py-2 text-xs text-green-300">{success}</p>}
+      {error && <p className="rounded-md border border-red-700 bg-red-950/40 backdrop-blur px-3 py-2 text-xs text-red-300">{error}</p>}
+      {success && <p className="rounded-md border border-green-800 bg-green-950/40 backdrop-blur px-3 py-2 text-xs text-green-300">{success}</p>}
 
       <div className="flex items-center justify-end gap-2">
         <button
@@ -241,13 +268,15 @@ export function CreateStreamForm({ onCreated }: { onCreated?: () => void }) {
       <style jsx>{`
         :global(.input) {
           width: 100%;
-          border: 1px solid #26262d;
-          background: #0a0a0c;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(8px);
           padding: 0.5rem 0.75rem;
           font-size: 0.875rem;
           border-radius: 0.5rem;
           color: white;
           outline: none;
+          transition: border-color 0.15s ease;
         }
         :global(.input:focus) {
           border-color: #ff7a45;
