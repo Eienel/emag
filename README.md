@@ -1,27 +1,66 @@
 # ShadowPay
 
-> Confidential payroll & vesting streams on iExec Nox.
-> Salaries on-chain. Numbers off it.
+> **Crypto solved payments. ShadowPay solves payroll.**
+> Confidential salary, vesting, and contractor streams on iExec Nox.
 
 [![iExec Vibe Coding Challenge](https://img.shields.io/badge/iExec-Vibe%20Coding%20Challenge-ff7a45)](https://dorahacks.io/hackathon/vibe-coding-iexec/detail)
 [![Arbitrum Sepolia](https://img.shields.io/badge/network-Arbitrum%20Sepolia-28a0f0)](https://sepolia.arbiscan.io)
+[![Live demo](https://img.shields.io/badge/live-shadowpay--eight.vercel.app-blue)](https://shadowpay-eight.vercel.app)
 
-ShadowPay is a payroll and vesting protocol where every salary, RSU grant, and
-contractor invoice flows in **confidential ERC-7984 tokens** powered by iExec's
-Nox protocol. Amounts are encrypted with FHE before they touch the chain — only
-the payer, recipient, and any auditors they explicitly authorise can decrypt
-them.
+## Why this matters
 
-It solves the problem that has kept Web3-native payroll a non-starter for real
-companies: **public blockchains broadcast every salary on Etherscan**. Today,
-the only workaround is custodial off-ramps (Deel, Coinbase, Bitwage), which
-defeat the point of paying in crypto. ShadowPay keeps the on-chain audit trail
-for compliance while keeping individual amounts private — exactly the trade-off
-real-world finance actually needs.
+Crypto solved global, instant, programmable payments. It has not solved
+**payroll**. Until now, every company paying salaries on-chain has had to
+pick:
+
+- **Transparency** — pay direct on Ethereum, accept that every employee
+  can read every other employee's salary on Etherscan.
+- **Usability** — pay through a custodial middleman (Deel, Coinbase,
+  Bitwage), which defeats the entire point of paying in crypto.
+
+ShadowPay is the first protocol that delivers both. Salaries are
+**confidential** ERC-7984 tokens, encrypted with FHE through iExec's Nox
+protocol; the on-chain audit trail still exists, but individual amounts are
+unreadable without explicit permission. Auditors, regulators, and
+accountants can be granted **selective disclosure** per stream when needed.
+
+## Who it's for
+
+- **Crypto-native startups** paying remote teams in stablecoins.
+- **DAOs** running contributor and core-team payroll on-chain.
+- **Tokenized companies** distributing equity grants (RSUs, ESOPs) without
+  publishing every employee's allocation.
+- **Global contractors** who want stablecoin pay without the rest of the
+  internet seeing the invoice amount.
+
+## Why now
+
+- **On-chain salaries are growing fast.** Stablecoin payroll (USDC, EURC,
+  USDe) is going mainstream as remote work globalises and FX/banking rails
+  for remote teams stay terrible.
+- **Privacy is the last missing primitive.** Streaming, vesting,
+  compliance hooks (ERC-3643), and confidential token standards (ERC-7984)
+  all exist. Nothing has stitched them together for payroll until now.
+- **FHE is finally production-ready on a real L2.** iExec Nox brings
+  fully-homomorphic-encrypted state to Arbitrum Sepolia with native dev
+  tools, a usable SDK, and live infrastructure.
+
+## How it feels in 3 steps
+
+1. **Wrap.** Deposit any ERC-20 stablecoin (we ship with USDC). The
+   contract wraps it into `wcUSDC` — a confidential ERC-7984 equivalent.
+2. **Stream.** Type *"Pay Alice $5,000 monthly for 12 months with a 3-month
+   cliff."* ChainGPT parses it. The contract encrypts the per-period amount
+   with FHE before it ever touches the chain.
+3. **Claim.** The recipient pulls each period as it vests; the contract
+   releases the encrypted balance via `confidentialTransfer`. Only the
+   payer, recipient, and granted auditors can ever decrypt the number.
+
+**Live demo:** <https://shadowpay-eight.vercel.app>
 
 ---
 
-## What it does
+## What it does (technical)
 
 - **Wrap** any ERC-20 stablecoin (USDC, EURC, USDe…) into a confidential
   ERC-7984 equivalent (e.g. wcUSDC) using the official iExec

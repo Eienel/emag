@@ -6,98 +6,94 @@ Per the challenge brief, the X post must include:
 - link to GitHub repo
 - tag `@iEx_ec` and `@Chain_GPT`
 
-Three options below — short, medium, and threaded — pick whichever fits
-your account voice. Replace `<demo-link>`, `<vercel-link>`, and `<repo-link>`
-before posting.
+## Pinned line (use everywhere)
+
+> Crypto solved payments. ShadowPay solves payroll.
 
 ---
 
-## Option A — single tweet (most concise)
+## Option A — single tweet (recommended)
 
 ```
-Salaries on-chain. Numbers off it.
+Crypto solved payments. It hasn't solved payroll.
 
-Built ShadowPay for the @iEx_ec Vibe Coding Challenge: confidential payroll
-streams in ERC-7984 tokens via Nox. Employees see their pay. Auditors get
-selective disclosure. Etherscan sees ciphertext.
+Until now, paying salaries on-chain meant choosing between transparency
+(every salary public on Etherscan) or usability (custodial off-ramps).
 
-Live: <vercel-link>
+ShadowPay does both — confidential ERC-7984 salary streams on @iEx_ec Nox,
+with selective auditor disclosure.
+
+Live: https://shadowpay-eight.vercel.app
 Code: <repo-link>
 Demo: <demo-link>
 
-@Chain_GPT
+Vibe-coded with @Chain_GPT. Built on @arbitrum.
 ```
 
-## Option B — medium (one tweet, three lines)
+## Option B — thread (4 tweets)
 
+Tweet 1 (hook):
 ```
-Public blockchains broadcast every salary on Etherscan. That's why nobody
-runs Web3 payroll for real.
+Built ShadowPay for the @iEx_ec Vibe Coding Challenge.
 
-ShadowPay fixes it: streams flow in confidential ERC-7984 tokens powered by
-@iEx_ec Nox. Vibe-coded with @Chain_GPT.
+Crypto has solved payments. It hasn't solved payroll.
 
-Live: <vercel-link>
-Code: <repo-link>
-Demo: <demo-link>
-```
+Until today, every Web3 company has had to pick:
+• transparency (salaries public on Etherscan), or
+• usability (custodial off-ramps that defeat the point)
 
-## Option C — thread (4 tweets)
-
-Tweet 1:
-```
-Built this for the @iEx_ec Vibe Coding Challenge:
-
-ShadowPay — confidential payroll & vesting streams on Arbitrum Sepolia.
-Salaries on-chain. Numbers off it. 🧵
+ShadowPay does both. 🧵
 
 Demo: <demo-link>
 ```
 
-Tweet 2:
+Tweet 2 (the build):
 ```
-The problem: every Web3 payroll attempt dies the moment employees realise
-their salary is public on Etherscan. The "fix" today is a custodial
-middleman (Deel, Coinbase, Bitwage) — defeating the entire point of
-paying in crypto.
+How: every salary flows in a confidential ERC-7984 token, encrypted with
+FHE on @iEx_ec Nox before it ever hits Arbitrum.
+
+The schedule (period, cliff, total periods) is public for compliance —
+but the amount is ciphertext to anyone except the people you choose.
 ```
 
-Tweet 3:
+Tweet 3 (the magic moment):
 ```
-The build: wrap any ERC-20 stablecoin into ERC-7984 with iExec's wrapper.
-Stream it in chunked periods. Per-period amount stays encrypted on-chain;
-payouts compute payout = amountPerPeriod × periodsElapsed entirely in FHE.
-Auditors get selective disclosure per-stream.
+Three wallets, one demo:
+
+• Employee → connects, decrypts their stream → sees $5,000/mo
+• Coworker → connects, sees the stream exists → ciphertext only
+• Auditor (granted by employer) → decrypts on demand → sees the number
+
+That's selective disclosure. That's what real-world payroll actually needs.
+```
+
+Tweet 4 (CTA + tags):
+```
+Live: https://shadowpay-eight.vercel.app
+Code (MIT): <repo-link>
+
+Built for crypto-native startups, DAOs, tokenized companies, and global
+contractors paying remote teams.
 
 Vibe-coded with @Chain_GPT.
 ```
 
-Tweet 4:
-```
-Live dApp: <vercel-link>
-Code (MIT): <repo-link>
-
-What I'd build next:
-- ESOP grants flowing in tokenized equity (ERC-3643 + ERC-7984)
-- multi-recipient batch streams
-- milestone-triggered streams for contractors
-```
-
 ---
 
-## Hashtags (optional, only if it fits)
+## Hashtags (only if it fits naturally)
 
-`#Web3 #DeFi #RWA #Privacy #FHE #ConfidentialDeFi #Arbitrum`
+`#ConfidentialDeFi #FHE #Arbitrum #Privacy #RWA`
 
 ## Visuals to attach
 
 The post is much stronger with one of:
-- the 4-min demo as a native video (best for engagement)
-- a single screenshot showing the employer dashboard with one card decrypted
-  and one card still showing as a ciphertext (visceral — people get it
-  instantly)
-- a 30-sec teaser clip of the decrypt moment, with the full demo linked
 
-If you only have time for one screenshot, take it on the **Auditor view**
-showing two stream cards — one decrypted (orange number) and one still
-shown as a `cipher` block. That image alone tells the whole story.
+1. **The 4-min demo as native video** — best for engagement.
+2. **A teaser clip showing the decrypt moment** — record 15-30 seconds of
+   the auditor view: an encrypted stream card → tap *Decrypt* → orange
+   number appears. Visceral.
+3. **A single screenshot of the auditor view** with two cards visible:
+   one decrypted (showing `5,000 USDC`), one still showing as a
+   `0x4f3a…b2e7` ciphertext. That image alone tells the whole story.
+
+If you only have time for one piece of media, take screenshot #3.

@@ -8,57 +8,67 @@ export default function HomePage() {
           <span className="h-1.5 w-1.5 rounded-full bg-accent" /> iExec Nox · ERC-7984 · Arbitrum
         </p>
         <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight">
-          Salaries on-chain.
+          Crypto solved payments.
           <br />
-          <span className="text-accent">Numbers off it.</span>
+          <span className="text-accent">ShadowPay solves payroll.</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted">
-          ShadowPay streams payroll and vesting in <span className="text-white">confidential ERC-7984 tokens</span>.
-          Employees see their own pay. Auditors get selective disclosure. Etherscan sees ciphertext.
+          Until now, paying salaries on-chain meant choosing between
+          <span className="text-white"> transparency</span> (every salary public on Etherscan) and
+          <span className="text-white"> usability</span> (custodial off-ramps that defeat the point).
+          ShadowPay is the first protocol that delivers both — confidential ERC-7984 streams with
+          selective disclosure for auditors.
         </p>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/employer"
-            className="group rounded-2xl border border-edge bg-smoke p-5 transition hover:border-accent"
+            className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-ink"
           >
-            <p className="text-xs uppercase tracking-widest text-muted">For founders & DAOs</p>
-            <p className="mt-2 text-xl font-semibold">Run payroll →</p>
-            <p className="mt-2 text-sm text-muted">
-              Wrap USDC into wcUSDC. Spin up streams from natural language. Cancel anytime.
-            </p>
+            Run payroll →
           </Link>
           <Link
             href="/employee"
-            className="group rounded-2xl border border-edge bg-smoke p-5 transition hover:border-accent"
+            className="rounded-md border border-edge px-5 py-2.5 text-sm font-medium hover:border-accent"
           >
-            <p className="text-xs uppercase tracking-widest text-muted">For employees</p>
-            <p className="mt-2 text-xl font-semibold">Claim & decrypt →</p>
-            <p className="mt-2 text-sm text-muted">
-              See your stream. Pull each period the moment it vests. Unwrap to USDC when you need it.
-            </p>
+            Claim your pay
           </Link>
           <Link
             href="/auditor"
-            className="group rounded-2xl border border-edge bg-smoke p-5 transition hover:border-accent"
+            className="rounded-md border border-edge px-5 py-2.5 text-sm font-medium hover:border-accent"
           >
-            <p className="text-xs uppercase tracking-widest text-muted">For auditors</p>
-            <p className="mt-2 text-xl font-semibold">Selective disclosure →</p>
-            <p className="mt-2 text-sm text-muted">
-              Granted by employer or employee. Decrypt only the streams you've been allowed to see.
-            </p>
+            Audit a stream
           </Link>
         </div>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2">
-          <Card title="Why confidential?">
-            Public payroll is a non-starter for any real company. ShadowPay keeps amounts encrypted
-            on-chain via FHE, so the on-chain record exists for compliance but stays unreadable
-            without permission.
+        <div className="mt-14 grid gap-4 sm:grid-cols-3">
+          <Card title="Built for">
+            Crypto-native startups paying remote teams. DAOs running contributor payroll. Global
+            contractors who want stablecoin pay without their salary public on Etherscan. Token
+            grants and ESOP distributions for tokenized companies.
           </Card>
-          <Card title="Why streams?">
-            Continuous vesting + per-period claims mirror how real companies pay people: monthly
-            salary, RSU cliffs, contractor milestones. All composable with existing DeFi.
+          <Card title="Why now">
+            On-chain salaries are growing fast as stablecoin payroll (USDC, EURC, USDe) goes
+            mainstream and remote work goes global. Privacy is the last missing primitive — and FHE
+            on iExec Nox finally makes it production-ready on a real L2.
+          </Card>
+          <Card title="How it feels">
+            <span className="text-white">1.</span> Wrap USDC into wcUSDC.&nbsp;
+            <span className="text-white">2.</span> Type "pay Alice $5k/mo for a year" — ChainGPT
+            fills the form.&nbsp;
+            <span className="text-white">3.</span> One click. Stream is live, encrypted on-chain,
+            visible only to the people you choose.
+          </Card>
+        </div>
+
+        <div className="mt-14 grid gap-4 sm:grid-cols-2">
+          <Card title="What stays private">
+            Per-period amount. Recipient balance. Total stream value. Anything an employee or
+            contractor would consider their compensation.
+          </Card>
+          <Card title="What's still verifiable">
+            That a stream exists. Its schedule (period length, total periods, cliff). Its payer and
+            recipient. Auditors with explicit grants can decrypt amounts on demand.
           </Card>
         </div>
       </section>
