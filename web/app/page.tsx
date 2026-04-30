@@ -4,43 +4,36 @@ import deployments from "@/lib/deployments.json";
 
 export default function HomePage() {
   const payroll = deployments.contracts.confidentialPayrollStream;
+
   return (
-    <div className="pt-12 sm:pt-16">
+    <div className="pt-14 sm:pt-20">
       <section className="max-w-3xl">
-        <p className="mb-5 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
-          Live on Arbitrum Sepolia · iExec Nox · ERC-7984
-        </p>
-        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
-          Crypto solved payments.
-          <br />
-          <span className="bg-gradient-to-r from-accent via-orange-300 to-accent bg-clip-text text-transparent">
-            ShadowPay solves payroll.
-          </span>
+        <h1 className="text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl">
+          Payroll that doesn't leak.
         </h1>
-        <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">
-          Paying salaries on-chain has meant choosing between
-          <span className="text-white"> transparency</span> (every salary public on Etherscan) and
-          <span className="text-white"> usability</span> (custodial off-ramps that defeat the point).
-          ShadowPay does both — confidential ERC-7984 streams with selective disclosure for auditors.
+        <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
+          Stablecoin salaries on-chain are great until your team's comp is one
+          Etherscan search away. ShadowPay streams pay in confidential
+          ERC-7984 tokens. Amounts are encrypted at rest. Auditors get access
+          when you grant it, not before.
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-7 flex flex-wrap items-center gap-2">
           <Link
             href="/employer"
-            className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-ink shadow-[0_0_0_1px_rgba(255,122,69,0.4),0_8px_30px_-10px_rgba(255,122,69,0.6)] transition hover:brightness-110"
+            className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-ink hover:brightness-110"
           >
-            Run payroll →
+            Run payroll
           </Link>
           <Link
             href="/employee"
-            className="rounded-md glass glass-hover px-5 py-2.5 text-sm font-medium"
+            className="rounded-md px-4 py-2 text-sm text-white/80 hover:text-white"
           >
-            Claim your pay
+            Claim pay
           </Link>
           <Link
             href="/auditor"
-            className="rounded-md glass glass-hover px-5 py-2.5 text-sm font-medium"
+            className="rounded-md px-4 py-2 text-sm text-white/80 hover:text-white"
           >
             Audit a stream
           </Link>
@@ -48,52 +41,132 @@ export default function HomePage() {
             href={arbiscanAddr(payroll)}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md px-3 py-2.5 text-sm font-medium text-muted hover:text-accent"
+            className="rounded-md px-3 py-2 text-sm text-muted hover:text-accent"
           >
-            View contract ↗
+            Contract ↗
           </a>
         </div>
+      </section>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-3">
-          <Card title="Built for">
-            Crypto-native startups paying remote teams. DAOs running contributor payroll. Global
-            contractors who want stablecoin pay without their salary public on Etherscan. Token
-            grants and ESOP distributions for tokenized companies.
-          </Card>
-          <Card title="Why now">
-            On-chain salaries are growing fast as stablecoin payroll (USDC, EURC, USDe) goes
-            mainstream and remote work goes global. Privacy is the last missing primitive — and FHE
-            on iExec Nox finally makes it production-ready on a real L2.
-          </Card>
-          <Card title="How it feels">
-            <span className="text-white">1.</span> Wrap USDC into wcUSDC.&nbsp;
-            <span className="text-white">2.</span> Type "pay Alice $5k/mo for a year" — ChainGPT
-            fills the form.&nbsp;
-            <span className="text-white">3.</span> One click. Stream is live, encrypted on-chain,
-            visible only to the people you choose.
-          </Card>
+      <section className="mt-16 max-w-3xl">
+        <div className="rounded-xl border border-white/10 bg-black/40 p-5 font-mono text-[13px] leading-relaxed">
+          <p className="text-muted">
+            <span className="text-white/40"># in the create-stream form, type:</span>
+          </p>
+          <p className="mt-1 text-white">
+            pay <span className="text-accent">0xAlice</span> 5,000 USDC monthly
+            for 12 months with a 3-month cliff
+          </p>
+          <p className="mt-3 text-muted">
+            <span className="text-white/40"># ChainGPT fills the spec, FHE seals
+            the amount, one tx creates the stream:</span>
+          </p>
+          <p className="mt-1 break-all text-white/70">
+            createStream(<span className="text-accent">0xAlice</span>,{" "}
+            <span className="text-orange-300">0x9f3c…ea</span>{" "}
+            <span className="text-white/40">/* ciphertext */</span>, …)
+          </p>
+        </div>
+        <p className="mt-3 text-xs text-muted">
+          Only Alice and the payer can decrypt the amount. Everyone else sees
+          the schedule and a 32-byte handle.
+        </p>
+      </section>
+
+      <section className="mt-20 max-w-4xl">
+        <div className="grid gap-px overflow-hidden rounded-2xl bg-white/[0.06] sm:grid-cols-2">
+          <Half
+            label="Encrypted"
+            items={[
+              "Amount per period",
+              "Total stream value",
+              "Recipient's running balance",
+              "Whatever an employee would call their salary",
+            ]}
+          />
+          <Half
+            label="Still public"
+            items={[
+              "That a stream exists",
+              "Schedule: cadence, length, cliff",
+              "Payer and recipient addresses",
+              "Auditors decrypt on demand, with a grant",
+            ]}
+            tone="muted"
+          />
+        </div>
+      </section>
+
+      <section className="mt-20 max-w-3xl space-y-8 text-sm leading-relaxed text-muted">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-white">
+            Who it's for
+          </p>
+          <p className="mt-2">
+            Crypto-native startups paying remote teams in stablecoins. DAOs running
+            contributor payroll. Global contractors who want USDC pay without
+            their compensation in a public block explorer. Token grants and ESOP
+            schedules where the vesting amount is sensitive.
+          </p>
         </div>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2">
-          <Card title="What stays private">
-            Per-period amount. Recipient balance. Total stream value. Anything an employee or
-            contractor would consider their compensation.
-          </Card>
-          <Card title="What's still verifiable">
-            That a stream exists. Its schedule (period length, total periods, cliff). Its payer and
-            recipient. Auditors with explicit grants can decrypt amounts on demand.
-          </Card>
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-white">
+            Why now
+          </p>
+          <p className="mt-2">
+            On-chain stablecoin payroll is the actual bull case for crypto rails
+            this cycle. The blocker has been privacy: nobody wants their team's
+            comp public. FHE on iExec Nox is the first thing that makes it
+            workable on a real L2 without a custodian in the loop.
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-white">
+            Stack
+          </p>
+          <p className="mt-2 font-mono text-xs">
+            iExec Nox · ERC-7984 · Arbitrum Sepolia · ChainGPT · Next.js · viem
+          </p>
         </div>
       </section>
     </div>
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Half({
+  label,
+  items,
+  tone,
+}: {
+  label: string;
+  items: string[];
+  tone?: "muted";
+}) {
   return (
-    <div className="glass glass-hover rounded-2xl p-5">
-      <p className="text-sm font-semibold text-white">{title}</p>
-      <p className="mt-2 text-sm text-muted">{children}</p>
+    <div className="bg-[#0a0a0e] p-6 sm:p-7">
+      <p
+        className={
+          tone === "muted"
+            ? "text-xs uppercase tracking-wider text-muted"
+            : "text-xs uppercase tracking-wider text-accent"
+        }
+      >
+        {label}
+      </p>
+      <ul className="mt-4 space-y-2 text-sm">
+        {items.map((it) => (
+          <li key={it} className="flex gap-2">
+            <span className={tone === "muted" ? "text-white/30" : "text-accent/60"}>
+              ›
+            </span>
+            <span className={tone === "muted" ? "text-muted" : "text-white"}>
+              {it}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

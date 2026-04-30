@@ -17,10 +17,11 @@ export default function AuditorPage() {
   return (
     <div className="space-y-10 pt-10">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight">Selective disclosure</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          As an auditor you can decrypt streams you've been granted access to. Anything else stays
-          ciphertext. Filter by payer or recipient address to find the streams you have rights to.
+        <h1 className="text-3xl font-medium tracking-tight">Selective disclosure</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          You see plaintext for streams you've been granted access to. Everything
+          else stays ciphertext. Filter by payer or recipient to find the
+          streams you can read.
         </p>
       </section>
 

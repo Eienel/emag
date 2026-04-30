@@ -14,10 +14,10 @@ export default function EmployeePage() {
   return (
     <div className="space-y-10 pt-10">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight">Your pay</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Streams flow into your wallet as confidential ERC-7984 tokens. Decrypt to see your own
-          number — only you and your employer (and anyone you authorise) can.
+        <h1 className="text-3xl font-medium tracking-tight">Your pay</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Streams arrive as confidential ERC-7984 tokens. Decrypt to see your
+          own number. Only you, your employer, and anyone you authorise can.
         </p>
       </section>
 

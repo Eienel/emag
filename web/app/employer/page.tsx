@@ -16,11 +16,11 @@ export default function EmployerPage() {
   return (
     <div className="space-y-12 pt-10">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight">Run payroll</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Wrap USDC into a confidential balance, then create a stream. The per-period amount is
-          encrypted with FHE before it ever touches the chain — only you, the recipient, and any
-          auditor you grant can ever decrypt it.
+        <h1 className="text-3xl font-medium tracking-tight">Run payroll</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Wrap USDC into a confidential balance, then create a stream. The
+          per-period amount is encrypted before it touches the chain. Only you,
+          the recipient, and any auditor you grant can read it.
         </p>
       </section>
 
