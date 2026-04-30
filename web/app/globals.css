@@ -54,6 +54,17 @@ body::before {
   border-color: rgba(255, 122, 69, 0.4);
 }
 
+/* Select dropdown options inherit OS colors by default — force dark so the
+   options aren't unreadable white-on-white in some browsers / on Windows. */
+select {
+  color: #f1f1f3;
+  background-color: rgba(20, 20, 26, 0.85);
+}
+select option {
+  background-color: #14141a;
+  color: #f1f1f3;
+}
+
 .cipher {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   letter-spacing: 0.02em;

@@ -26,13 +26,25 @@ export function shortAddr(addr?: string | null): string {
 }
 
 const PERIOD_LABELS: Record<number, string> = {
+  60: "minute",
   [60 * 60]: "hour",
   [24 * 60 * 60]: "day",
   [7 * 24 * 60 * 60]: "week",
+  [14 * 24 * 60 * 60]: "fortnight",
   [30 * 24 * 60 * 60]: "month",
   [365 * 24 * 60 * 60]: "year",
 };
 
 export function periodLabel(seconds: number): string {
   return PERIOD_LABELS[seconds] ?? `${seconds}s`;
+}
+
+const ARBISCAN_BASE = "https://sepolia.arbiscan.io";
+
+export function arbiscanTx(hash: string): string {
+  return `${ARBISCAN_BASE}/tx/${hash}`;
+}
+
+export function arbiscanAddr(addr: string): string {
+  return `${ARBISCAN_BASE}/address/${addr}`;
 }

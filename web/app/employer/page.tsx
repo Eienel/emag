@@ -4,6 +4,7 @@ import { useAccount } from "wagmi";
 import { CreateStreamForm } from "@/components/CreateStreamForm";
 import { StreamCard } from "@/components/StreamCard";
 import { MintFaucet } from "@/components/MintFaucet";
+import { ConfidentialBalance } from "@/components/ConfidentialBalance";
 import { useStreams } from "@/lib/streams";
 
 export default function EmployerPage() {
@@ -23,7 +24,10 @@ export default function EmployerPage() {
         </p>
       </section>
 
-      <MintFaucet />
+      <div className="grid gap-4 md:grid-cols-2">
+        <MintFaucet />
+        <ConfidentialBalance />
+      </div>
 
       <section className="rounded-3xl glass-strong p-6">
         <CreateStreamForm onCreated={refresh} />

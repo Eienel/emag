@@ -2,6 +2,7 @@
 
 import { useAccount } from "wagmi";
 import { StreamCard } from "@/components/StreamCard";
+import { ConfidentialBalance } from "@/components/ConfidentialBalance";
 import { useStreams } from "@/lib/streams";
 
 export default function EmployeePage() {
@@ -19,6 +20,8 @@ export default function EmployeePage() {
           number — only you and your employer (and anyone you authorise) can.
         </p>
       </section>
+
+      {address && <ConfidentialBalance />}
 
       <section className="space-y-3">
         {!address && (

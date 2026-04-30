@@ -1,19 +1,25 @@
 import Link from "next/link";
+import { arbiscanAddr } from "@/lib/format";
+import deployments from "@/lib/deployments.json";
 
 export default function HomePage() {
+  const payroll = deployments.contracts.confidentialPayrollStream;
   return (
-    <div className="pt-12">
+    <div className="pt-12 sm:pt-16">
       <section className="max-w-3xl">
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs uppercase tracking-widest text-muted">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" /> iExec Nox · ERC-7984 · Arbitrum
+        <p className="mb-5 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-muted">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+          Live on Arbitrum Sepolia · iExec Nox · ERC-7984
         </p>
-        <h1 className="text-5xl font-semibold leading-[1.05] tracking-tight">
+        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
           Crypto solved payments.
           <br />
-          <span className="text-accent">ShadowPay solves payroll.</span>
+          <span className="bg-gradient-to-r from-accent via-orange-300 to-accent bg-clip-text text-transparent">
+            ShadowPay solves payroll.
+          </span>
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-muted">
-          Until now, paying salaries on-chain meant choosing between
+        <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">
+          Paying salaries on-chain has meant choosing between
           <span className="text-white"> transparency</span> (every salary public on Etherscan) and
           <span className="text-white"> usability</span> (custodial off-ramps that defeat the point).
           ShadowPay does both — confidential ERC-7984 streams with selective disclosure for auditors.
@@ -22,7 +28,7 @@ export default function HomePage() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/employer"
-            className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-ink"
+            className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-ink shadow-[0_0_0_1px_rgba(255,122,69,0.4),0_8px_30px_-10px_rgba(255,122,69,0.6)] transition hover:brightness-110"
           >
             Run payroll →
           </Link>
@@ -38,6 +44,14 @@ export default function HomePage() {
           >
             Audit a stream
           </Link>
+          <a
+            href={arbiscanAddr(payroll)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md px-3 py-2.5 text-sm font-medium text-muted hover:text-accent"
+          >
+            View contract ↗
+          </a>
         </div>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-3">

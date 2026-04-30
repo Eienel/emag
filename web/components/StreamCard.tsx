@@ -5,7 +5,7 @@ import { useAccount, useReadContract, useWalletClient } from "wagmi";
 import type { Address } from "viem";
 import { payrollAbi } from "@/lib/abis";
 import { getNoxClient, shortHandle } from "@/lib/nox";
-import { formatUSDC, periodLabel, shortAddr } from "@/lib/format";
+import { formatUSDC, periodLabel, shortAddr, arbiscanAddr, arbiscanTx } from "@/lib/format";
 import deployments from "@/lib/deployments.json";
 
 type Role = "payer" | "recipient" | "auditor";
@@ -32,6 +32,7 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
   const [decrypted, setDecrypted] = useState<bigint | null>(null);
   const [decryptErr, setDecryptErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [lastTx, setLastTx] = useState<{ hash: string; label: string } | null>(null);
 
   const { data: claimable, refetch: refetchClaimable } = useReadContract({
     address: payroll,
@@ -70,12 +71,13 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
     if (!walletClient) return;
     setBusy(true);
     try {
-      await walletClient.writeContract({
+      const tx = await walletClient.writeContract({
         address: payroll,
         abi: payrollAbi,
         functionName: "claim",
         args: [stream.id],
       });
+      setLastTx({ hash: tx, label: "Claim" });
       refetchClaimable(); refetchVested();
     } finally {
       setBusy(false);
@@ -87,12 +89,13 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
     if (!confirm("Cancel this stream? The recipient keeps already-vested periods.")) return;
     setBusy(true);
     try {
-      await walletClient.writeContract({
+      const tx = await walletClient.writeContract({
         address: payroll,
         abi: payrollAbi,
         functionName: "cancel",
         args: [stream.id],
       });
+      setLastTx({ hash: tx, label: "Cancel" });
       refetchVested();
     } finally {
       setBusy(false);
@@ -105,12 +108,13 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
     if (!auditor) return;
     setBusy(true);
     try {
-      await walletClient.writeContract({
+      const tx = await walletClient.writeContract({
         address: payroll,
         abi: payrollAbi,
         functionName: "grantAuditor",
         args: [stream.id, auditor as Address],
       });
+      setLastTx({ hash: tx, label: "Grant auditor" });
     } finally {
       setBusy(false);
     }
@@ -197,9 +201,30 @@ export function StreamCard({ stream, role }: { stream: Stream; role: Role }) {
         )}
       </div>
 
-      <p className="mt-4 truncate font-mono text-[10px] text-muted">
-        ciphertext: {stream.amountHandle}
-      </p>
+      {lastTx && (
+        <a
+          href={arbiscanTx(lastTx.hash)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 block truncate rounded-md border border-green-800/50 bg-green-950/30 px-3 py-2 text-[11px] text-green-300 hover:border-accent hover:text-accent"
+        >
+          ✓ {lastTx.label} confirmed — view tx ↗
+        </a>
+      )}
+
+      <div className="mt-4 space-y-1">
+        <p className="truncate font-mono text-[10px] text-muted">
+          ciphertext: {stream.amountHandle}
+        </p>
+        <a
+          href={arbiscanAddr(payroll)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest text-muted hover:text-accent"
+        >
+          View contract on Arbiscan ↗
+        </a>
+      </div>
     </div>
   );
 }
