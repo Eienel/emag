@@ -22,7 +22,19 @@ export function Nav() {
           aria-label="ShadowPay — back to home"
           className="flex shrink-0 items-center gap-2 text-base font-semibold tracking-tight sm:text-lg"
         >
-          <span className="inline-block h-3 w-3 rounded-sm bg-accent" />
+          <svg viewBox="0 0 64 64" className="h-7 w-7" aria-hidden="true">
+            <rect width="64" height="64" rx="13" fill="#0a0a0e" />
+            <path
+              d="M44 14 H22 a10 10 0 0 0 0 20 H42 a10 10 0 0 1 0 20 H18"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="32" cy="30" r="2.4" fill="#0a0a0e" />
+            <path d="M31 30 L33 30 L33.6 36 L30.4 36 Z" fill="#0a0a0e" />
+          </svg>
           <span className="hidden sm:inline">ShadowPay</span>
         </Link>
 
