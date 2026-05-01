@@ -61,7 +61,7 @@ on Arbitrum Sepolia in 72 hours.
    handle is `bytes32` on chain but appears variously as `string`,
    `Uint8Array`, or `0x${string}` across SDK methods. We added our own
    normalisation in `web/lib/nox.ts`. A `type Handle = \`0x\${string}\`` exported
-   from `@iexec-nox/nox-sdk` would be a cheap quality-of-life fix.
+   from `@iexec-nox/handle` would be a cheap quality-of-life fix.
 
 ## Things we wish existed
 

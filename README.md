@@ -236,10 +236,10 @@ Open <http://localhost:3000>, switch your wallet to Arbitrum Sepolia, and:
 | Item                            | Value                       |
 |---------------------------------|-----------------------------|
 | Network                         | Arbitrum Sepolia (421614)   |
-| `MockERC20` (mUSDC)             | *populated post-deploy in `contracts/deployments.arbitrumSepolia.json`* |
-| `WrappedConfidentialUSDC`       | *populated post-deploy*     |
-| `ConfidentialPayrollStream`     | *populated post-deploy*     |
-| Frontend                        | Vercel — link in the X post |
+| `MockERC20` (mUSDC)             | [`0x2c14B8Fbec68C5e658092394F37E708A9AD73a45`](https://sepolia.arbiscan.io/address/0x2c14B8Fbec68C5e658092394F37E708A9AD73a45) |
+| `WrappedConfidentialUSDC`       | [`0x9D41BeF7bdA089c774537941565E74abA508356B`](https://sepolia.arbiscan.io/address/0x9D41BeF7bdA089c774537941565E74abA508356B) |
+| `ConfidentialPayrollStream`     | [`0x3C2a36E0C6E6D3Dd5b8797032B75983438F2B904`](https://sepolia.arbiscan.io/address/0x3C2a36E0C6E6D3Dd5b8797032B75983438F2B904) |
+| Frontend                        | <https://shadowpay-eight.vercel.app> |
 | GitHub                          | this repo                   |
 
 `contracts/deployments.arbitrumSepolia.json` is the source of truth
@@ -273,7 +273,7 @@ or forget.
 | `ConfidentialPayrollStream` | uses `Nox.fromExternal(externalEuint256, bytes)` to ingest the encrypted per-period amount |
 | Same                        | uses `Nox.mul(euint256, uint256)` to compute `payout = amountPerPeriod × periods` |
 | Same                        | uses `Nox.allow / allowTransient / allowThis` to manage ACL for payer, recipient, contract, auditor |
-| Frontend                    | uses `@iexec-nox/nox-sdk` to encrypt user input and decrypt granted handles via the Nox gateway |
+| Frontend                    | uses `@iexec-nox/handle` to encrypt user input and decrypt granted handles via the Nox gateway |
 
 The contract never sees plaintext amounts. The frontend never displays an
 amount the connected wallet doesn't have ACL access to.
